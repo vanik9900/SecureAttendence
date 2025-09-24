@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureAttend - Smart Attendance System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-shield-alt"></i>
+                <span>SecureAttend</span>
+            </div>
+            <div class="nav-menu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#attendance" class="nav-link">Attendance</a>
+                <a href="#dashboard" class="nav-link">Dashboard</a>
+                <a href="#profile" class="nav-link">Profile</a>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-background">
+            <div class="tech-grid"></div>
+            <div class="floating-particles"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <span class="gradient-text">SECURE</span>
+                    <span class="accent-text">ATTEND</span>
+                </h1>
+                <p class="hero-subtitle">Advanced Biometric Attendance System</p>
+                <p class="hero-description">
+                    Next-generation facial recognition with real-time liveness detection,
+                    ensuring secure and accurate attendance tracking.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="scrollToSection('attendance')">
+                        <i class="fas fa-camera"></i>
+                        Mark Attendance
+                    </button>
+                    <button class="btn btn-secondary" onclick="scrollToSection('dashboard')">
+                        <i class="fas fa-chart-line"></i>
+                        View Dashboard
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="scanner-frame">
+                    <div class="scanner-overlay">
+                        <div class="scan-line"></div>
+                        <div class="corner corner-tl"></div>
+                        <div class="corner corner-tr"></div>
+                        <div class="corner corner-bl"></div>
+                        <div class="corner corner-br"></div>
+                    </div>
+                    <div class="face-outline">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Advanced Security Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Liveness Detection</h3>
+                    <p>Advanced anti-spoofing technology prevents photo and video attacks</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI Recognition</h3>
+                    <p>Deep learning algorithms for accurate facial identification</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Real-time Processing</h3>
+                    <p>Instant attendance marking with sub-second response times</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure Storage</h3>
+                    <p>GDPR compliant biometric data encryption and protection</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Attendance Section -->
+    <section id="attendance" class="attendance-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Mark Your Attendance</h2>
+                <p class="section-subtitle">Position your face within the scanner frame</p>
+            </div>
+            
+            <div class="attendance-container">
+                <div class="camera-section">
+                    <div class="camera-frame">
+                        <video id="video" autoplay muted></video>
+                        <canvas id="canvas" style="display: none;"></canvas>
+                        <div class="camera-overlay">
+                            <div class="face-guide">
+                                <div class="guide-circle">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="guide-text">Position your face here</div>
+                            </div>
+                            <div class="scan-animation"></div>
+                        </div>
+                        <div class="camera-controls">
+                            <button id="captureBtn" class="btn btn-capture">
+                                <i class="fas fa-camera"></i>
+                                Capture
+                            </button>
+                        </div>
+                    </div>
+                    <div class="camera-status">
+                        <div class="status-indicator">
+                            <div class="status-dot"></div>
+                            <span id="statusText">Camera Ready</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="processing-section">
+                    <div id="processingCard" class="processing-card hidden">
+                        <div class="processing-animation">
+                            <div class="spinner"></div>
+                        </div>
+                        <h3>Processing Attendance...</h3>
+                        <p>Analyzing facial features and verifying liveness</p>
+                    </div>
+
+                    <div id="resultCard" class="result-card hidden">
+                        <div class="result-icon">
+                            <i id="resultIcon" class="fas fa-check-circle"></i>
+                        </div>
+                        <h3 id="resultTitle">Attendance Marked!</h3>
+                        <p id="resultMessage">Welcome! Your attendance has been recorded successfully.</p>
+                        <div class="result-details">
+                            <div class="detail-item">
+                                <span class="label">Time:</span>
+                                <span id="resultTime" class="value">--:--</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Confidence:</span>
+                                <span id="resultConfidence" class="value">--%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="dashboard-section">
+        <div class="container">
+            <h2 class="section-title">Attendance Dashboard</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Monthly Attendance</h3>
+                        <div class="stat-number">23</div>
+                        <div class="stat-change positive">+2.5% efficiency</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Success Rate</h3>
+                        <div class="stat-number">98.5%</div>
+                        <div class="stat-change neutral">optimal performance</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Security Score</h3>
+                        <div class="stat-number">99.2%</div>
+                        <div class="stat-change positive">liveness verified</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="attendance-log">
+                <div class="log-header">
+                    <h3>Today's Attendance Log</h3>
+                    <div class="log-count">
+                        <span id="logCount">0</span> entries
+                    </div>
+                </div>
+                <div class="log-content">
+                    <div id="attendanceList" class="attendance-list">
+                        <!-- Attendance records will be populated here -->
+                    </div>
+                    <div id="emptyState" class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h4>No attendance records today</h4>
+                        <p>Use the camera above to mark your attendance</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profile Section -->
+    <section id="profile" class="profile-section">
+        <div class="container">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-info">
+                        <h2>John Doe</h2>
+                        <p>Employee ID: EMP001</p>
+                        <div class="profile-status">
+                            <span class="status-badge active">Active</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-details">
+                    <div class="detail-row">
+                        <span class="label">Department:</span>
+                        <span class="value">Engineering</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Position:</span>
+                        <span class="value">Software Developer</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Join Date:</span>
+                        <span class="value">January 15, 2023</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Last Login:</span>
+                        <span class="value">Today, 9:30 AM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>SecureAttend</span>
+                </div>
+                <div class="footer-text">
+                    <p>&copy; 2024 SecureAttend. Advanced Biometric Security Solutions.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

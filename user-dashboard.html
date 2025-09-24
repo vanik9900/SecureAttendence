@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureAttend - User Dashboard</title>
+    <link rel="stylesheet" href="user-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>SecureAttend</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <h1>Attendance Portal</h1>
+                <div class="current-time">
+                    <i class="fas fa-clock"></i>
+                    <span id="currentTime"></span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <span id="userName">John Doe</span>
+                        <small id="userRole">Employee</small>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <i class="fas fa-calendar-day"></i>
+                <span>Today: <span id="todayDate"></span></span>
+            </div>
+            <div class="status-item">
+                <i class="fas fa-user-check"></i>
+                <span>Status: <span id="attendanceStatus">Not Marked</span></span>
+            </div>
+            <div class="status-item">
+                <i class="fas fa-clock"></i>
+                <span>Check-in: <span id="checkInTime">--:--</span></span>
+            </div>
+        </div>
+
+        <!-- Attendance Section -->
+        <div class="attendance-container">
+            <div class="camera-section">
+                <div class="camera-header">
+                    <h2>Mark Your Attendance</h2>
+                    <p>Position your face within the frame for biometric verification</p>
+                </div>
+
+                <div class="camera-frame">
+                    <video id="video" autoplay muted playsinline></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                    
+                    <!-- Camera Overlay -->
+                    <div class="camera-overlay">
+                        <div class="face-detection-frame">
+                            <div class="detection-corners">
+                                <div class="corner corner-tl"></div>
+                                <div class="corner corner-tr"></div>
+                                <div class="corner corner-bl"></div>
+                                <div class="corner corner-br"></div>
+                            </div>
+                            <div class="face-guide">
+                                <div class="guide-circle" id="faceGuide">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="guide-text" id="guideText">Position your face here</div>
+                            </div>
+                            <div class="scan-line" id="scanLine"></div>
+                        </div>
+
+                        <!-- Detection Indicators -->
+                        <div class="detection-indicators">
+                            <div class="indicator" id="faceDetected">
+                                <i class="fas fa-user"></i>
+                                <span>Face Detected</span>
+                            </div>
+                            <div class="indicator" id="livenessCheck">
+                                <i class="fas fa-eye"></i>
+                                <span>Liveness Check</span>
+                            </div>
+                            <div class="indicator" id="maskDetection">
+                                <i class="fas fa-mask"></i>
+                                <span>Mask Detection</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Camera Controls -->
+                    <div class="camera-controls">
+                        <button id="captureBtn" class="capture-btn" onclick="captureAttendance()">
+                            <i class="fas fa-camera"></i>
+                            <span>Capture Attendance</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Camera Status -->
+                <div class="camera-status">
+                    <div class="status-indicator" id="cameraStatus">
+                        <div class="status-dot"></div>
+                        <span id="statusText">Initializing Camera...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Processing Section -->
+            <div class="processing-section">
+                <!-- Processing Card -->
+                <div id="processingCard" class="processing-card hidden">
+                    <div class="processing-header">
+                        <i class="fas fa-cog fa-spin"></i>
+                        <h3>Processing Attendance</h3>
+                    </div>
+                    <div class="processing-steps">
+                        <div class="step" id="step1">
+                            <i class="fas fa-search"></i>
+                            <span>Detecting Face...</span>
+                        </div>
+                        <div class="step" id="step2">
+                            <i class="fas fa-eye"></i>
+                            <span>Verifying Liveness...</span>
+                        </div>
+                        <div class="step" id="step3">
+                            <i class="fas fa-user-check"></i>
+                            <span>Matching Identity...</span>
+                        </div>
+                        <div class="step" id="step4">
+                            <i class="fas fa-save"></i>
+                            <span>Recording Attendance...</span>
+                        </div>
+                    </div>
+                    <div class="processing-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <span id="progressText">0%</span>
+                    </div>
+                </div>
+
+                <!-- Result Card -->
+                <div id="resultCard" class="result-card hidden">
+                    <div class="result-header">
+                        <div class="result-icon" id="resultIcon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3 id="resultTitle">Attendance Marked Successfully!</h3>
+                    </div>
+                    <div class="result-details">
+                        <p id="resultMessage">Welcome! Your attendance has been recorded.</p>
+                        <div class="result-stats">
+                            <div class="stat">
+                                <label>Time:</label>
+                                <span id="resultTime">--:--</span>
+                            </div>
+                            <div class="stat">
+                                <label>Confidence:</label>
+                                <span id="resultConfidence">--%</span>
+                            </div>
+                            <div class="stat">
+                                <label>Status:</label>
+                                <span id="resultStatus">Present</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alert Card -->
+                <div id="alertCard" class="alert-card hidden">
+                    <div class="alert-header">
+                        <div class="alert-icon" id="alertIcon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h3 id="alertTitle">Security Alert</h3>
+                    </div>
+                    <div class="alert-body">
+                        <p id="alertMessage">An issue was detected during attendance marking.</p>
+                        <div class="alert-actions">
+                            <button class="btn btn-primary" onclick="retryAttendance()">
+                                <i class="fas fa-redo"></i>
+                                Try Again
+                            </button>
+                            <button class="btn btn-secondary" onclick="contactSupport()">
+                                <i class="fas fa-headset"></i>
+                                Contact Support
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Summary -->
+        <div class="summary-section">
+            <h2>Today's Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="summary-content">
+                        <h3>Check-in Time</h3>
+                        <div class="summary-value" id="summaryCheckIn">Not marked</div>
+                    </div>
+                </div>
+                
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="summary-content">
+                        <h3>Duration</h3>
+                        <div class="summary-value" id="summaryDuration">--:--</div>
+                    </div>
+                </div>
+                
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="summary-content">
+                        <h3>This Week</h3>
+                        <div class="summary-value">4/5 Days</div>
+                    </div>
+                </div>
+                
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="summary-content">
+                        <h3>Attendance Rate</h3>
+                        <div class="summary-value">96.2%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent History -->
+        <div class="history-section">
+            <div class="history-header">
+                <h2>Recent Attendance History</h2>
+                <button class="btn btn-secondary" onclick="viewFullHistory()">
+                    <i class="fas fa-history"></i>
+                    View All
+                </button>
+            </div>
+            <div class="history-list" id="historyList">
+                <!-- History items will be populated here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Notifications Container -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Attendance Help</h3>
+                <button class="modal-close" onclick="closeHelpModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <h4>How to Mark Attendance</h4>
+                    <ol>
+                        <li>Position your face within the detection frame</li>
+                        <li>Look directly at the camera</li>
+                        <li>Ensure good lighting on your face</li>
+                        <li>Click "Capture Attendance" when ready</li>
+                        <li>Wait for the system to process your image</li>
+                    </ol>
+                </div>
+                <div class="help-section">
+                    <h4>Troubleshooting</h4>
+                    <ul>
+                        <li><strong>Face not detected:</strong> Ensure you're facing the camera directly</li>
+                        <li><strong>Low confidence:</strong> Improve lighting or remove obstructions</li>
+                        <li><strong>Mask detected:</strong> Remove mask for attendance marking</li>
+                        <li><strong>Duplicate attempt:</strong> You've already marked attendance today</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Button -->
+    <button class="help-btn" onclick="showHelpModal()">
+        <i class="fas fa-question-circle"></i>
+    </button>
+
+    <script src="user-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+@echo off
+echo Installing SecureAttend Backend Dependencies...
+echo.
+
+echo Installing FastAPI...
+C:\Users\PRINCE\AppData\Local\Programs\Python\Python313\python.exe -m pip install fastapi
+
+echo Installing Uvicorn...
+C:\Users\PRINCE\AppData\Local\Programs\Python\Python313\python.exe -m pip install uvicorn
+
+echo Installing SQLAlchemy...
+C:\Users\PRINCE\AppData\Local\Programs\Python\Python313\python.exe -m pip install sqlalchemy
+
+echo Installing Python-dotenv...
+C:\Users\PRINCE\AppData\Local\Programs\Python\Python313\python.exe -m pip install python-dotenv
+
+echo Installing Pydantic...
+C:\Users\PRINCE\AppData\Local\Programs\Python\Python313\python.exe -m pip install pydantic
+
+echo Installing OpenCV...
+C:\Users\PRINCE\AppData\Local\Programs\Python\Python313\python.exe -m pip install opencv-python
+
+echo Installing NumPy...
+C:\Users\PRINCE\AppData\Local\Programs\Python\Python313\python.exe -m pip install numpy
+
+echo Installing Pillow...
+C:\Users\PRINCE\AppData\Local\Programs\Python\Python313\python.exe -m pip install Pillow
+
+echo.
+echo Installation complete!
+echo.
+echo Starting backend server...
+C:\Users\PRINCE\AppData\Local\Programs\Python\Python313\python.exe -m uvicorn app.main:app --reload
